@@ -1,4 +1,4 @@
-// server.js — Криста 9
+// server.js — Криста 9 (лёгкий OGG плеер)
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -9,13 +9,9 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegStatic = require('ffmpeg-static');
-
-ffmpeg.setFfmpegPath(ffmpegStatic);
 
 // ========== ПАПКИ ==========
-['public/avatars', 'public/music'].forEach(dir => {
+['public/music'].forEach(dir => {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 });
 
@@ -33,24 +29,22 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 app.use('/upload/', limiter);
 
-// ========== MULTER для музыки ==========
+// ========== MULTER ДЛЯ OGG ==========
 const musicStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'public/music'),
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + ext);   // пока с оригинальным расширением, потом заменим на .ogg
+    cb(null, uniqueSuffix + '.ogg');
   }
 });
 const uploadMusic = multer({
   storage: musicStorage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+  limits: { fileSize: 15 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = /\.(mp3|acc|aac|wav|flac)$/i;
-    if (allowed.test(path.extname(file.originalname))) {
+    if (file.mimetype === 'audio/ogg' || file.mimetype === 'application/ogg') {
       cb(null, true);
     } else {
-      cb(new Error('Только MP3, ACC, AAC, WAV, FLAC'));
+      cb(new Error('Только OGG-файлы'), false);
     }
   }
 });
@@ -69,7 +63,7 @@ const User = mongoose.model('User', userSchema);
 const roomSchema = new mongoose.Schema({
   id: { type: String, unique: true },
   name: String,
-  adminOnly: { type: Boolean, default: false },  // true = писать может только создатель
+  adminOnly: { type: Boolean, default: false },
   creator: String,
   admins: [String],
   participants: [String],
@@ -89,7 +83,6 @@ const musicSchema = new mongoose.Schema({
   title: String,
   userId: String,
   url: String,
-  duration: Number,   // в секундах
   uploadedAt: { type: Date, default: Date.now }
 });
 const Music = mongoose.model('Music', musicSchema);
@@ -130,65 +123,25 @@ function isUserOnline(userId) {
   return [...io.sockets.sockets.values()].some(s => s.userId === userId);
 }
 
-// ========== ЗАГРУЗКА И КОНВЕРТАЦИЯ МУЗЫКИ ==========
+// ========== ЗАГРУЗКА МУЗЫКИ ==========
 app.post('/upload/music', uploadMusic.single('music'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Файл не загружен' });
-    const tempPath = req.file.path;
-    const originalName = req.body.title || path.basename(req.file.originalname, path.extname(req.file.originalname));
+    const title = req.body.title || req.file.originalname.replace(/\.ogg$/, '');
     const userId = req.body.userId;
-
-    // Генерируем новое имя для .ogg
-    const oggFilename = Date.now() + '-' + Math.round(Math.random() * 1E9) + '.ogg';
-    const oggPath = path.join('public/music', oggFilename);
-
-    // Конвертация в OGG
-    await new Promise((resolve, reject) => {
-      ffmpeg(tempPath)
-        .audioCodec('libvorbis')
-        .audioBitrate('128k')
-        .output(oggPath)
-        .on('end', resolve)
-        .on('error', reject)
-        .run();
-    });
-
-    // Получение длительности
-    const duration = await new Promise((resolve, reject) => {
-      ffmpeg.ffprobe(oggPath, (err, metadata) => {
-        if (err) return reject(err);
-        resolve(metadata.format.duration || 0);
-      });
-    });
-
-    // Удаляем временный файл
-    fs.unlinkSync(tempPath);
-
     const id = generateNanoId(10);
-    const url = '/music/' + oggFilename;
-    await Music.create({ id, title: originalName, userId, url, duration });
-
-    res.json({ id, title: originalName, url, duration });
+    const url = '/music/' + req.file.filename;
+    await Music.create({ id, title, userId, url });
+    res.json({ id, title, url });
   } catch (e) {
-    res.status(500).json({ error: 'Ошибка конвертации' });
+    res.status(500).json({ error: 'Не удалось сохранить трек' });
   }
 });
 
-// Список треков с сортировкой по дате загрузки
 app.get('/api/music', async (req, res) => {
   const tracks = await Music.find().sort({ uploadedAt: -1 }).limit(100).lean();
-  res.json(tracks.map(t => ({
-    ...t,
-    uploadedAt: t.uploadedAt,
-    durationFormatted: formatDuration(t.duration)
-  })));
+  res.json(tracks);
 });
-
-function formatDuration(sec) {
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
 
 // ========== SOCKET.IO ==========
 io.on('connection', (socket) => {
