@@ -20,7 +20,6 @@
       max-width: 420px;
       display: flex;
       flex-direction: column;
-      /* шапка + средний блок + панель = авто высота, центрируется flex'ом body */
     }
     .top-header {
       background: #181818;
@@ -32,20 +31,18 @@
       border: 1px solid #2a2a2a;
       border-bottom: none;
     }
-    /* фиксированный средний блок с соотношением 1:1.5 */
+    /* Средний блок теперь с динамической высотой */
     .screens-wrapper {
-      position: relative;
       width: 100%;
-      height: 0;
-      padding-bottom: 150%; /* 1:1.5 */
+      height: 400px;           /* начальное значение */
       background: #111;
       border: 1px solid #2a2a2a;
       border-top: none;
       border-bottom: none;
+      transition: height 0.2s;
     }
     .screens-container {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      height: 100%;
       overflow-y: auto;
     }
     .screen {
@@ -53,15 +50,21 @@
       padding: 12px;
       height: 100%;
     }
-    .screen.active { display: block; }
+    .screen.active { display: flex; flex-direction: column; }  /* все экраны теперь flex-колонки */
 
     .bottom-nav {
       background: #181818;
       border: 1px solid #2a2a2a;
       border-top: none;
       display: flex;
+      justify-content: space-between;   /* кнопки навигации слева, регулировка справа */
+      align-items: center;
+      padding: 6px 10px;
+    }
+    .nav-buttons {
+      display: flex;
       justify-content: space-around;
-      padding: 6px 0;
+      flex: 1;
     }
     .nav-btn {
       background: transparent;
@@ -75,6 +78,21 @@
     .nav-btn.active {
       color: #6c5ce7;
       border-bottom-color: #6c5ce7;
+    }
+    .resize-buttons {
+      display: flex;
+      gap: 4px;
+      margin-left: 10px;
+    }
+    .resize-buttons button {
+      background: #2a2a2a;
+      border: none;
+      color: #ccc;
+      font-size: 18px;
+      width: 28px;
+      height: 28px;
+      line-height: 1;
+      cursor: pointer;
     }
 
     /* Чат-лист */
@@ -260,7 +278,7 @@
       display: flex; align-items: center; gap: 8px; margin: 8px 0; color: #ccc; font-size: 14px;
     }
 
-    /* Экран авторизации (отдельный экран с фоном) */
+    /* Экран авторизации */
     .auth-screen {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -300,24 +318,21 @@
 </head>
 <body>
 <div class="app" id="app">
-  <!-- Шапка -->
   <div class="top-header">Криста 9</div>
 
-  <!-- Средний фиксированный блок (1:1.5) -->
-  <div class="screens-wrapper">
+  <div class="screens-wrapper" id="screensWrapper">
     <div class="screens-container">
-      <!-- Экран Чатов -->
       <div id="chatsScreen" class="screen active">
         <div class="search-bar">
           <input type="text" placeholder="Поиск чатов или UIN" id="searchInput">
         </div>
         <div id="searchResults" style="margin-bottom:8px;"></div>
-        <div id="chatListContainer">
+        <div id="chatListContainer" style="flex:1; overflow-y:auto;">
           <div id="chatList"></div>
         </div>
         <button class="create-btn" id="createChatBtn">Создать чат</button>
-        <!-- Экран комнаты чата (скрыт) -->
-        <div id="chatRoomContainer" style="display:none; height:100%; flex-direction:column;">
+
+        <div id="chatRoomContainer" style="display:none; flex-direction:column; height:100%;">
           <div class="chat-room">
             <div class="chat-room-header">
               <button class="back-btn" id="backToChatList">←</button>
@@ -333,10 +348,9 @@
         </div>
       </div>
 
-      <!-- Экран Музыки -->
       <div id="musicScreen" class="screen">
         <div style="font-size:16px; margin-bottom:8px;">Плеер</div>
-        <div id="trackList"></div>
+        <div id="trackList" style="flex:1; overflow-y:auto;"></div>
         <div class="player-controls">
           <button class="ctrl-btn" id="rewindBack">⏪</button>
           <button class="ctrl-btn" id="playBtn">▶️</button>
@@ -345,7 +359,6 @@
         </div>
       </div>
 
-      <!-- Экран Настроек -->
       <div id="settingsScreen" class="screen">
         <div class="setting-row">
           <label>Ваш UIN</label>
@@ -360,15 +373,20 @@
     </div>
   </div>
 
-  <!-- Нижняя панель -->
   <div class="bottom-nav">
-    <button class="nav-btn active" data-screen="chatsScreen">Чаты</button>
-    <button class="nav-btn" data-screen="musicScreen">Музыка</button>
-    <button class="nav-btn" data-screen="settingsScreen">Настройки</button>
+    <div class="nav-buttons">
+      <button class="nav-btn active" data-screen="chatsScreen">Чаты</button>
+      <button class="nav-btn" data-screen="musicScreen">Музыка</button>
+      <button class="nav-btn" data-screen="settingsScreen">Настройки</button>
+    </div>
+    <div class="resize-buttons">
+      <button id="decreaseHeight">–</button>
+      <button id="increaseHeight">+</button>
+    </div>
   </div>
 </div>
 
-<!-- Экран авторизации (поверх всего) -->
+<!-- Экран авторизации -->
 <div class="auth-screen" id="authScreen">
   <div class="auth-box">
     <h3 id="authTitle" style="color:#ccc; margin-bottom:12px;">Вход</h3>
@@ -437,11 +455,47 @@ const closeCreateChatModal = document.getElementById('closeCreateChatModal');
 const createChatSubmit = document.getElementById('createChatSubmit');
 const adminOnlyCheck = document.getElementById('adminOnlyCheck');
 const newChatName = document.getElementById('newChatName');
+const screensWrapper = document.getElementById('screensWrapper');
+const decreaseBtn = document.getElementById('decreaseHeight');
+const increaseBtn = document.getElementById('increaseHeight');
 
 let authMode = 'login';
 let currentAudio = null;
 
-// ========== НАВИГАЦИЯ ПО ВКЛАДКАМ ==========
+// ========== РЕГУЛИРОВКА ВЫСОТЫ ==========
+const HEIGHT_STEP = 20;
+const MIN_HEIGHT = 250;
+const MAX_HEIGHT = 700;
+const DEFAULT_HEIGHT = 400;
+
+function loadHeight() {
+  const saved = localStorage.getItem('k9_height');
+  return saved ? parseInt(saved) : DEFAULT_HEIGHT;
+}
+function saveHeight(h) {
+  localStorage.setItem('k9_height', h);
+}
+function setHeight(h) {
+  screensWrapper.style.height = h + 'px';
+  saveHeight(h);
+}
+let currentHeight = loadHeight();
+setHeight(currentHeight);
+
+decreaseBtn.addEventListener('click', () => {
+  if (currentHeight - HEIGHT_STEP >= MIN_HEIGHT) {
+    currentHeight -= HEIGHT_STEP;
+    setHeight(currentHeight);
+  }
+});
+increaseBtn.addEventListener('click', () => {
+  if (currentHeight + HEIGHT_STEP <= MAX_HEIGHT) {
+    currentHeight += HEIGHT_STEP;
+    setHeight(currentHeight);
+  }
+});
+
+// ========== НАВИГАЦИЯ ==========
 navButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.dataset.screen;
@@ -449,7 +503,6 @@ navButtons.forEach(btn => {
     document.getElementById(target).classList.add('active');
     navButtons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    // дополнительные действия
     if (target === 'chatsScreen') loadChatList();
     if (target === 'musicScreen') loadMusicList();
   });
@@ -491,7 +544,6 @@ socket.on('authSuccess', profile => {
   currentUser = profile;
   localStorage.setItem('k9_token', profile.token);
   authScreen.style.display = 'none';
-  // показать приложение
   document.getElementById('chatsScreen').classList.add('active');
   settingsUin.textContent = profile.uin;
   nicknameInput.value = profile.nick;
@@ -511,7 +563,6 @@ socket.on('tokenLoginResult', res => {
   }
 });
 
-// Проверить токен при загрузке
 const token = localStorage.getItem('k9_token');
 if (token) {
   socket.emit('loginByToken', token);
@@ -519,32 +570,23 @@ if (token) {
   authScreen.style.display = 'flex';
 }
 
-// ========== ВЫХОД ==========
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('k9_token');
   location.reload();
 });
 
-// ========== ЗАГРУЗКА СПИСКА ЧАТОВ ==========
-function loadChatList() {
-  if (!currentUser) return;
-  socket.emit('getMainList');
-}
+// ========== ЧАТЫ ==========
+function loadChatList() { if (currentUser) socket.emit('getMainList'); }
 socket.on('mainList', ({ contacts, rooms }) => {
   let html = '';
   rooms.forEach(r => {
     html += `<div class="chat-item" data-room="${r.id}" data-name="${escapeHtml(r.name)}">
-      <div class="chat-info">
-        <div class="name">${escapeHtml(r.name)}${r.adminOnly ? ' [только админ]' : ''}</div>
-      </div>
+      <div class="chat-info"><div class="name">${escapeHtml(r.name)}${r.adminOnly ? ' [только админ]' : ''}</div></div>
     </div>`;
   });
   contacts.forEach(c => {
     html += `<div class="chat-item" data-contact="${c.id}" data-nick="${escapeHtml(c.nick)}">
-      <div class="chat-info">
-        <div class="name">${escapeHtml(c.nick)}</div>
-        <div class="last-msg">${c.online ? 'В сети' : 'Не в сети'}</div>
-      </div>
+      <div class="chat-info"><div class="name">${escapeHtml(c.nick)}</div><div class="last-msg">${c.online ? 'В сети' : 'Не в сети'}</div></div>
     </div>`;
   });
   chatList.innerHTML = html || '<div style="color:#888;">Нет чатов</div>';
@@ -556,18 +598,12 @@ function attachChatListListeners() {
     el.addEventListener('click', () => openRoom(el.dataset.room, el.dataset.name));
   });
   document.querySelectorAll('.chat-item[data-contact]').forEach(el => {
-    el.addEventListener('click', () => {
-      socket.emit('startPrivateChat', el.dataset.contact);
-    });
+    el.addEventListener('click', () => socket.emit('startPrivateChat', el.dataset.contact));
   });
 }
 
-createChatBtn.addEventListener('click', () => {
-  createChatModal.classList.add('visible');
-});
-closeCreateChatModal.addEventListener('click', () => {
-  createChatModal.classList.remove('visible');
-});
+createChatBtn.addEventListener('click', () => createChatModal.classList.add('visible'));
+closeCreateChatModal.addEventListener('click', () => createChatModal.classList.remove('visible'));
 createChatSubmit.addEventListener('click', () => {
   const name = newChatName.value.trim();
   if (!name) return;
@@ -577,7 +613,6 @@ createChatSubmit.addEventListener('click', () => {
 });
 socket.on('roomCreated', () => loadChatList());
 
-// ========== ОТКРЫТИЕ КОМНАТЫ ==========
 function openRoom(roomId, name) {
   currentRoomId = roomId;
   chatRoomName.textContent = name;
@@ -601,9 +636,7 @@ socket.on('roomInfo', ({ messages }) => {
 socket.on('newMessage', msg => {
   if (currentRoomId === msg.roomId) appendMessage(msg);
 });
-socket.on('privateRoomReady', (data) => {
-  openRoom(data.roomId, data.targetNick);
-});
+socket.on('privateRoomReady', data => openRoom(data.roomId, data.targetNick));
 
 function appendMessage(msg) {
   const div = document.createElement('div');
@@ -631,10 +664,7 @@ searchInput.addEventListener('input', () => {
   socket.emit('globalSearch', { query: q });
 });
 socket.on('searchResults', results => {
-  if (!results.length) {
-    searchResults.innerHTML = '<div style="color:#888;">Ничего не найдено</div>';
-    return;
-  }
+  if (!results.length) { searchResults.innerHTML = '<div style="color:#888;">Ничего не найдено</div>'; return; }
   searchResults.innerHTML = results.map(item => {
     if (item.type === 'user') {
       return `<div class="chat-item" data-contact="${item.uin}" data-nick="${escapeHtml(item.nick)}">
@@ -654,10 +684,7 @@ function loadMusicList() {
   fetch('/api/music')
     .then(res => res.json())
     .then(tracks => {
-      if (!tracks.length) {
-        trackList.innerHTML = '<div style="color:#888;">Нет треков</div>';
-        return;
-      }
+      if (!tracks.length) { trackList.innerHTML = '<div style="color:#888;">Нет треков</div>'; return; }
       trackList.innerHTML = tracks.map(t => {
         const uploadTime = new Date(t.uploadedAt).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
         const duration = t.durationFormatted;
@@ -669,9 +696,7 @@ function loadMusicList() {
       }).join('');
       attachTrackListeners();
     })
-    .catch(err => {
-      trackList.innerHTML = '<div style="color:#f88;">Ошибка загрузки</div>';
-    });
+    .catch(() => trackList.innerHTML = '<div style="color:#f88;">Ошибка загрузки</div>');
 }
 
 function attachTrackListeners() {
@@ -688,13 +713,8 @@ function attachTrackListeners() {
 
 playBtn.addEventListener('click', () => {
   if (!currentAudio) return;
-  if (currentAudio.paused) {
-    currentAudio.play();
-    playBtn.textContent = '⏸';
-  } else {
-    currentAudio.pause();
-    playBtn.textContent = '▶️';
-  }
+  if (currentAudio.paused) { currentAudio.play(); playBtn.textContent = '⏸'; }
+  else { currentAudio.pause(); playBtn.textContent = '▶️'; }
 });
 rewindBack.addEventListener('click', () => { if (currentAudio) currentAudio.currentTime -= 5; });
 rewindForward.addEventListener('click', () => { if (currentAudio) currentAudio.currentTime += 5; });
@@ -712,14 +732,9 @@ uploadMusicBtn.addEventListener('click', () => {
     form.append('userId', currentUser.uin);
     try {
       const res = await fetch('/upload/music', { method: 'POST', body: form });
-      if (res.ok) {
-        loadMusicList();
-      } else {
-        alert('Ошибка загрузки');
-      }
-    } catch (err) {
-      alert('Ошибка сети');
-    }
+      if (res.ok) loadMusicList();
+      else alert('Ошибка загрузки');
+    } catch (err) { alert('Ошибка сети'); }
   };
   input.click();
 });
@@ -727,12 +742,9 @@ uploadMusicBtn.addEventListener('click', () => {
 // ========== НАСТРОЙКИ ==========
 nicknameInput.addEventListener('change', () => {
   const nick = nicknameInput.value.trim();
-  if (nick && currentUser) {
-    socket.emit('updateProfile', { nick });
-  }
+  if (nick && currentUser) socket.emit('updateProfile', { nick });
 });
 
-// ========== УТИЛИТЫ ==========
 function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
