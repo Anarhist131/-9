@@ -31,10 +31,9 @@
       border: 1px solid #2a2a2a;
       border-bottom: none;
     }
-    /* Средний блок теперь с динамической высотой */
     .screens-wrapper {
       width: 100%;
-      height: 400px;           /* начальное значение */
+      height: 400px;
       background: #111;
       border: 1px solid #2a2a2a;
       border-top: none;
@@ -50,22 +49,18 @@
       padding: 12px;
       height: 100%;
     }
-    .screen.active { display: flex; flex-direction: column; }  /* все экраны теперь flex-колонки */
+    .screen.active { display: flex; flex-direction: column; }
 
     .bottom-nav {
       background: #181818;
       border: 1px solid #2a2a2a;
       border-top: none;
       display: flex;
-      justify-content: space-between;   /* кнопки навигации слева, регулировка справа */
+      justify-content: space-between;
       align-items: center;
       padding: 6px 10px;
     }
-    .nav-buttons {
-      display: flex;
-      justify-content: space-around;
-      flex: 1;
-    }
+    .nav-buttons { display: flex; justify-content: space-around; flex: 1; }
     .nav-btn {
       background: transparent;
       border: none;
@@ -75,15 +70,8 @@
       cursor: pointer;
       border-bottom: 2px solid transparent;
     }
-    .nav-btn.active {
-      color: #6c5ce7;
-      border-bottom-color: #6c5ce7;
-    }
-    .resize-buttons {
-      display: flex;
-      gap: 4px;
-      margin-left: 10px;
-    }
+    .nav-btn.active { color: #6c5ce7; border-bottom-color: #6c5ce7; }
+    .resize-buttons { display: flex; gap: 4px; margin-left: 10px; }
     .resize-buttons button {
       background: #2a2a2a;
       border: none;
@@ -95,224 +83,114 @@
       cursor: pointer;
     }
 
-    /* Чат-лист */
+    /* Чаты */
     .chat-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #222;
-      cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid #222; cursor: pointer;
     }
     .chat-info .name { font-size: 15px; color: #eee; }
     .chat-info .last-msg { font-size: 12px; color: #888; }
 
-    /* Комната чата */
-    .chat-room {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
+    .chat-room { display: flex; flex-direction: column; height: 100%; }
     .chat-room-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid #2a2a2a;
-      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0; border-bottom: 1px solid #2a2a2a; margin-bottom: 8px;
     }
-    .back-btn {
-      background: none;
-      border: none;
-      color: #6c5ce7;
-      font-size: 18px;
-      cursor: pointer;
-    }
-    .chat-room-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px 0;
-    }
+    .back-btn { background: none; border: none; color: #6c5ce7; font-size: 18px; cursor: pointer; }
+    .chat-room-messages { flex: 1; overflow-y: auto; padding: 4px 0; }
     .message {
-      padding: 6px 8px;
-      margin-bottom: 6px;
-      background: #1a1a1a;
-      border-left: 2px solid #444;
+      padding: 6px 8px; margin-bottom: 6px;
+      background: #1a1a1a; border-left: 2px solid #444;
     }
     .message.self { border-left-color: #6c5ce7; }
     .message .sender { font-size: 12px; color: #888; }
     .message .text { font-size: 14px; color: #ddd; margin: 4px 0; }
     .message .time { font-size: 10px; color: #666; text-align: right; }
 
-    .chat-room-input {
-      display: flex;
-      margin-top: 6px;
-    }
+    .chat-room-input { display: flex; margin-top: 6px; }
     .chat-room-input input {
-      flex: 1;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      padding: 6px 10px;
-      color: #ddd;
-      font-size: 14px;
-      outline: none;
+      flex: 1; background: #1a1a1a; border: 1px solid #333;
+      padding: 6px 10px; color: #ddd; font-size: 14px; outline: none;
     }
     .chat-room-input button {
-      background: #6c5ce7;
-      border: none;
-      color: #fff;
-      padding: 6px 14px;
-      margin-left: 6px;
-      cursor: pointer;
+      background: #6c5ce7; border: none; color: #fff;
+      padding: 6px 14px; margin-left: 6px; cursor: pointer;
     }
 
-    /* Поиск */
     .search-bar { margin-bottom: 10px; }
     .search-bar input {
-      width: 100%;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      padding: 6px 10px;
-      color: #ddd;
-      outline: none;
+      width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
+      padding: 6px 10px; color: #ddd; outline: none;
     }
-
     .create-btn {
-      background: #6c5ce7;
-      border: none;
-      color: #fff;
-      padding: 8px 16px;
-      margin: 10px 0;
-      cursor: pointer;
-      font-size: 14px;
+      background: #6c5ce7; border: none; color: #fff;
+      padding: 8px 16px; margin: 10px 0; cursor: pointer; font-size: 14px;
     }
 
     /* Музыка */
     .track-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #222;
-      cursor: pointer;
-      font-size: 14px;
-      color: #ccc;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid #222; cursor: pointer;
+      font-size: 14px; color: #ccc;
     }
     .track-row .upload-time { color: #888; width: 60px; }
     .track-row .track-title { flex: 1; text-align: center; }
     .track-row .track-duration { color: #888; width: 50px; text-align: right; }
 
     .player-controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      padding: 10px 0;
-      border-top: 1px solid #2a2a2a;
-      margin-top: 10px;
+      display: flex; justify-content: center; gap: 12px;
+      padding: 10px 0; border-top: 1px solid #2a2a2a; margin-top: 10px;
     }
     .ctrl-btn {
-      background: #2a2a2a;
-      border: none;
-      color: #ddd;
-      padding: 8px 12px;
-      cursor: pointer;
+      background: #2a2a2a; border: none; color: #ddd;
+      padding: 8px 12px; cursor: pointer;
     }
 
-    /* Настройки */
-    .setting-row { margin-bottom: 12px; }
-    .setting-row label { display: block; font-size: 13px; color: #aaa; margin-bottom: 4px; }
-    .setting-row input {
-      width: 100%;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      padding: 6px 10px;
-      color: #ddd;
-      outline: none;
-    }
-    .btn-logout {
-      background: #b71c1c;
-      border: none;
-      color: #fff;
-      padding: 8px 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    /* Модалка создания чата */
+    /* Модалки */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 200;
+      background: rgba(0,0,0,0.8); display: none;
+      justify-content: center; align-items: center; z-index: 200;
     }
     .modal-overlay.visible { display: flex; }
     .modal {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      padding: 16px;
-      width: 90%;
-      max-width: 300px;
+      background: #1a1a1a; border: 1px solid #333;
+      padding: 16px; width: 90%; max-width: 300px;
+      color: #ccc;
     }
-    .modal h3 { margin-bottom: 12px; font-size: 16px; color: #ccc; }
-    .modal input[type="text"], .modal input[type="password"] {
-      width: 100%;
-      background: #222;
-      border: 1px solid #333;
-      padding: 6px 10px;
-      color: #ddd;
-      margin-bottom: 8px;
-      outline: none;
-    }
+    .modal h3 { margin-bottom: 12px; font-size: 16px; }
     .modal button {
-      background: #6c5ce7;
-      border: none;
-      color: #fff;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-size: 14px;
+      background: #6c5ce7; border: none; color: #fff;
+      padding: 8px 16px; cursor: pointer; font-size: 14px;
     }
-    .modal .secondary { background: #333; margin-left: 6px; }
-    .toggle-row {
-      display: flex; align-items: center; gap: 8px; margin: 8px 0; color: #ccc; font-size: 14px;
+    .modal .secondary { background: #333; margin-top: 6px; }
+    .modal .hint { font-size: 12px; color: #888; margin: 8px 0; text-align: center; }
+    .convert-links {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+      margin: 12px 0;
+    }
+    .convert-links a button {
+      width: 100%; background: #2a2a2a; color: #ccc;
     }
 
-    /* Экран авторизации */
+    /* Авторизация */
     .auth-screen {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       background: url('https://img.freepik.com/free-photo/abstract-chromatic-gradient_23-2151920641.jpg?semt=ais_hybrid&w=740&q=80') center/cover no-repeat;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
+      display: flex; justify-content: center; align-items: center; z-index: 100;
     }
     .auth-box {
-      background: rgba(0,0,0,0.7);
-      padding: 20px;
-      width: 280px;
-      text-align: center;
-      border: 1px solid #444;
+      background: rgba(0,0,0,0.7); padding: 20px; width: 280px;
+      text-align: center; border: 1px solid #444;
     }
     .auth-box input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      background: #222;
-      border: 1px solid #444;
-      color: #ddd;
-      outline: none;
+      width: 100%; padding: 8px; margin-bottom: 10px;
+      background: #222; border: 1px solid #444; color: #ddd; outline: none;
     }
     .auth-box button {
-      background: #6c5ce7;
-      border: none;
-      color: #fff;
-      padding: 8px 16px;
-      cursor: pointer;
-      margin: 4px;
+      background: #6c5ce7; border: none; color: #fff;
+      padding: 8px 16px; cursor: pointer; margin: 4px;
     }
-    .auth-box .small-text { font-size: 12px; color: #aaa; margin-top: 8px; }
     .auth-error { color: #f7768e; margin-top: 8px; font-size: 13px; }
   </style>
 </head>
@@ -399,7 +277,23 @@
   </div>
 </div>
 
-<!-- Модалка создания чата -->
+<!-- Модальное окно загрузки трека -->
+<div class="modal-overlay" id="uploadTrackModal">
+  <div class="modal">
+    <h3>Выложить трек</h3>
+    <button id="selectTrackFileBtn">Загрузить трек</button>
+    <div class="hint">Только OGG</div>
+    <div class="convert-links">
+      <a href="https://convertio.co/ru/mp3-ogg/?ysclid=mon9dgn0512989656" target="_blank"><button>MP3 в OGG</button></a>
+      <a href="https://convertio.co/ru/wav-ogg/?ysclid=mon9e2y3x357570582" target="_blank"><button>WAV в OGG</button></a>
+      <a href="https://convertio.co/ru/flac-ogg/?ysclid=mon9ekwh94889899354" target="_blank"><button>FLAC в OGG</button></a>
+      <a href="https://convertio.co/ru/aac-ogg/?ysclid=mon9f42i4r270262420" target="_blank"><button>AAC в OGG</button></a>
+    </div>
+    <button class="secondary" id="closeUploadTrackModal">Отмена</button>
+  </div>
+</div>
+
+<!-- Модальное окно создания чата -->
 <div class="modal-overlay" id="createChatModal">
   <div class="modal">
     <h3>Создать чат</h3>
@@ -458,6 +352,9 @@ const newChatName = document.getElementById('newChatName');
 const screensWrapper = document.getElementById('screensWrapper');
 const decreaseBtn = document.getElementById('decreaseHeight');
 const increaseBtn = document.getElementById('increaseHeight');
+const uploadTrackModal = document.getElementById('uploadTrackModal');
+const selectTrackFileBtn = document.getElementById('selectTrackFileBtn');
+const closeUploadTrackModal = document.getElementById('closeUploadTrackModal');
 
 let authMode = 'login';
 let currentAudio = null;
@@ -687,7 +584,7 @@ function loadMusicList() {
       if (!tracks.length) { trackList.innerHTML = '<div style="color:#888;">Нет треков</div>'; return; }
       trackList.innerHTML = tracks.map(t => {
         const uploadTime = new Date(t.uploadedAt).toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-        const duration = t.durationFormatted;
+        const duration = '--:--';
         return `<div class="track-row" data-url="${t.url}" data-title="${escapeHtml(t.title)}">
           <span class="upload-time">${uploadTime}</span>
           <span class="track-title">${t.title}</span>
@@ -720,20 +617,30 @@ rewindBack.addEventListener('click', () => { if (currentAudio) currentAudio.curr
 rewindForward.addEventListener('click', () => { if (currentAudio) currentAudio.currentTime += 5; });
 
 uploadMusicBtn.addEventListener('click', () => {
+  uploadTrackModal.classList.add('visible');
+});
+closeUploadTrackModal.addEventListener('click', () => {
+  uploadTrackModal.classList.remove('visible');
+});
+selectTrackFileBtn.addEventListener('click', () => {
   const input = document.createElement('input');
   input.type = 'file';
-  input.accept = '.mp3,.acc,.aac,.wav,.flac';
+  input.accept = '.ogg';
   input.onchange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const form = new FormData();
     form.append('music', file);
-    form.append('title', file.name.replace(/\.[^/.]+$/, ''));
+    form.append('title', file.name.replace(/\.ogg$/, ''));
     form.append('userId', currentUser.uin);
     try {
       const res = await fetch('/upload/music', { method: 'POST', body: form });
-      if (res.ok) loadMusicList();
-      else alert('Ошибка загрузки');
+      if (res.ok) {
+        uploadTrackModal.classList.remove('visible');
+        loadMusicList();
+      } else {
+        alert('Ошибка загрузки');
+      }
     } catch (err) { alert('Ошибка сети'); }
   };
   input.click();
@@ -750,4 +657,4 @@ function escapeHtml(str) {
 }
 </script>
 </body>
-  </html>
+</html>
