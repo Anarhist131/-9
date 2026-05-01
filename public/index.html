@@ -200,7 +200,7 @@
 
   <div class="screens-wrapper" id="screensWrapper">
     <div class="screens-container">
-      <div id="chatsScreen" class="screen active">
+      <div id="chatsScreen" class="screen">
         <div class="search-bar">
           <input type="text" placeholder="Поиск чатов или UIN" id="searchInput">
         </div>
@@ -436,12 +436,23 @@ authSubmitBtn.addEventListener('click', () => {
   }
 });
 
+function showMainScreen() {
+  // скрываем все экраны и показываем чаты
+  screens.forEach(s => s.classList.remove('active'));
+  document.getElementById('chatsScreen').classList.add('active');
+  // обновляем активную кнопку навигации
+  navButtons.forEach(b => {
+    b.classList.remove('active');
+    if (b.dataset.screen === 'chatsScreen') b.classList.add('active');
+  });
+}
+
 socket.on('authError', msg => { authError.textContent = msg; });
 socket.on('authSuccess', profile => {
   currentUser = profile;
   localStorage.setItem('k9_token', profile.token);
   authScreen.style.display = 'none';
-  document.getElementById('chatsScreen').classList.add('active');
+  showMainScreen();
   settingsUin.textContent = profile.uin;
   nicknameInput.value = profile.nick;
   loadChatList();
@@ -450,13 +461,21 @@ socket.on('tokenLoginResult', res => {
   if (res.success) {
     currentUser = res.profile;
     authScreen.style.display = 'none';
-    document.getElementById('chatsScreen').classList.add('active');
+    showMainScreen();
     settingsUin.textContent = res.profile.uin;
     nicknameInput.value = res.profile.nick;
     loadChatList();
   } else {
     localStorage.removeItem('k9_token');
     authScreen.style.display = 'flex';
+  }
+});
+
+// Обработчик переподключения – восстанавливаем сессию
+socket.on('connect', () => {
+  const token = localStorage.getItem('k9_token');
+  if (token && !currentUser) {
+    socket.emit('loginByToken', token);
   }
 });
 
